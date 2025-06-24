@@ -6,7 +6,32 @@ import './index.css'
 class Stopwatch extends Component {
   state = {
     timeElapsedInSeconds: 0,
-    isTimerRunning: 0,
+    isTimerRunning: false,
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timeInterval)
+  }
+
+  onResetTimer = () => {
+    clearInterval(this.timeInterval)
+    this.setState({isTimerRunning: false, timeElapsedInSeconds: 0})
+  }
+
+  onStopTimer = () => {
+    clearInterval(this.timeInterval)
+    this.setState({isTimerRunning: false})
+  }
+
+  updateTime = () => {
+    this.setState(prevState => ({
+      timeElapsedInSeconds: prevState.timeElapsedInSeconds + 1,
+    }))
+  }
+
+  onStartTimer = () => {
+    this.timeInterval = setInterval(this.updateTime, 1000)
+    this.setState({isTimerRunning: true})
   }
 
   renderSeconds = () => {
@@ -31,6 +56,7 @@ class Stopwatch extends Component {
   }
 
   render() {
+    const {isTimerRunning} = this.state
     const time = `${this.renderMinutes()}:${this.renderSeconds()}`
     return (
       <div className="app-container">
@@ -47,13 +73,26 @@ class Stopwatch extends Component {
             </div>
             <h1 className="stopwatch-timer">{time}</h1>
             <div className="timer-buttons">
-              <button type="button" className="start-button button">
+              <button
+                type="button"
+                className="start-button button"
+                onClick={this.onStartTimer}
+                disabled={isTimerRunning  }
+              >
                 Start
               </button>
-              <button type="button" className="stop-button button">
+              <button
+                type="button"
+                className="stop-button button"
+                onClick={this.onStopTimer}
+              >
                 Stop
               </button>
-              <button type="button" className="reset-button button">
+              <button
+                type="button"
+                className="reset-button button"
+                onClick={this.onResetTimer}
+              >
                 Reset
               </button>
             </div>
